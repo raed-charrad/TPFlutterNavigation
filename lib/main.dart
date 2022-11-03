@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'data/FakeDogDatabase.dart';
+import 'data/Dog.dart';
 void main() {
   runApp(const MyApp());
 }
@@ -20,16 +21,6 @@ class MyApp extends StatelessWidget {
 }
 
 class FirstWidget extends StatelessWidget {
-  // List imgList = [
-  //   Image.asset("drawable/blue_dog.png"),
-  //   Image.asset("drawable/orange_dog.png"),
-  //   Image.asset("drawable/red_dog.png"),
-  //   Image.asset("drawable/yellow_dog.png"),
-  //   Image.asset("drawable/white_dog.png"),
-  //   Image.asset("drawable/wiggle_logo.png"),
-  // ];
-  // recuperate the list of dogs from the fake database
-  
   @override
   Widget build(BuildContext context) {
     return(Center(
@@ -39,46 +30,80 @@ class FirstWidget extends StatelessWidget {
               shrinkWrap: true,
               itemCount: dogList.length,
               itemBuilder: (context, index) {
-                return Card (
-                  margin: EdgeInsets.all(10),
-                  color: Color.fromARGB(238, 220, 220, 220),
-                  shadowColor: Colors.blueGrey,
-                  elevation: 20,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      ListTile(
-                        title: Text(dogList[index].name),
-                        subtitle: Text(dogList[index].age.toString()+"yrs | Playful"),
-                        leading: Image.asset("drawable/${dogList[index].image}"),
-                        trailing: Container(
-                          child: Column(
-                            children: [
-                              Text(dogList[index].gender, style: TextStyle(color: Colors.white,),),
-                              Text("12 min ago")
-                            ],
-                          ),
-                        ),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => SecondWidget(p1 : dogList[index].id)),
-                          );
-                        }
-                    ),
-                ],
-                ),
+                return GestureDetector(
+                  child:DogList(dogList[index]),
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => SecondWidget(p1 : dogList[index].id)
+                        )
+                    );
+                  },
                 );
-              }
+              },
           ),
         ],
       ),
     ));
   }
 }
-
-class FakeDogDatabase {
-
+Widget DogList(Dog dog) {
+  return Card (
+              margin: EdgeInsets.all(10),
+              color: Color.fromARGB(238, 220, 220, 220),
+              shadowColor: Colors.blueGrey,
+              elevation: 20,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child : Image.asset("drawable/${dog.image}", width: 100, height: 100, fit: BoxFit.cover),
+                  ),
+                  Expanded(
+                    child: Container(
+                      padding: EdgeInsets.all(10),
+                      child: Column(
+                        children:<Widget>[
+                        Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Text(dog.name, style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
+                          Container(
+                            decoration: BoxDecoration(
+                              color : dog.gender=='Male' ? Color.fromARGB(152, 33, 149, 243) : Color.fromARGB(255, 255, 192, 243),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            padding: EdgeInsets.all(5),
+                            child: Text(dog.gender , style: TextStyle(color : dog.gender=='Male' ? Colors.blue : Colors.pink)),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: <Widget>[
+                          Text("${dog.age} yrs | Playfull", style: TextStyle(fontSize: 12)),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Row(
+                            children: <Widget>[
+                              Icon(Icons.location_on, size: 15 , color: Colors.red),
+                              Text(" ${dog.distance}", style: TextStyle(fontSize: 12)),
+                            ],
+                          ),
+                          Text("12 min ago", style: TextStyle(fontSize: 12)),
+                        ],
+                      ),
+                      ],
+                      ),
+                    ),
+                  ),
+            ],
+            ),
+            );
 }
 class SecondWidget extends StatelessWidget {
   int p1;
@@ -123,10 +148,9 @@ class SecondWidget extends StatelessWidget {
                                     color: dogList[p1].gender == "Male"
                                         ? Colors.blue
                                         : Colors.pink)),
-                          ),
+                          ), 
                         ],
                       )),
-
                 ],
               ),
             ))));
